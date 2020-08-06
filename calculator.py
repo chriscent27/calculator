@@ -11,7 +11,7 @@ def welcome():
 def addition(num1, num2):
     return num1 + num2
 
-def subtract(num1, num2):
+def subtraction(num1, num2):
     return num1 - num2
 
 def multiplication(num1, num2):
@@ -28,7 +28,7 @@ def result():
     if(operation == 'Addition'):
         result = addition(var_1, var_2)
     elif(operation == 'Subtraction'):
-        result = subtract(var_1, var_2)
+        result = subtraction(var_1, var_2)
     elif(operation == 'Multiplication'):
         result = multiplication(var_1, var_2)
     elif(operation == 'Division'):
