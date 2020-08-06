@@ -8,6 +8,17 @@ app.config.from_object(__name__)
 def welcome():
     return render_template('calculator.html')
 
+def addition(num1, num2):
+    return num1 + num2
+
+def subtract(num1, num2):
+    return num1 - num2
+
+def multiplication(num1, num2):
+    return num1 * num2
+
+def division(num1, num2):
+    return num1 / num2
 
 @app.route('/result', methods=['POST'])
 def result():
@@ -15,17 +26,17 @@ def result():
     var_2 = request.form.get("var_2", type=int)
     operation = request.form.get("operation")
     if(operation == 'Addition'):
-        result = var_1 + var_2
+        result = addition(var_1, var_2)
     elif(operation == 'Subtraction'):
-        result = var_1 - var_2
+        result = subtract(var_1, var_2)
     elif(operation == 'Multiplication'):
-        result = var_1 * var_2
+        result = multiplication(var_1, var_2)
     elif(operation == 'Division'):
-        result = var_1 / var_2
+        result = division(var_1, var_2)
     else:
         result = 'INVALID CHOICE'
-    entry = result
-    return render_template('result.html', entry=entry)
+    # entry = result
+    return render_template('result.html', entry=result)
 
 if __name__ == '__main__':
     app.run(debug=True)
