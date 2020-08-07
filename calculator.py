@@ -38,5 +38,7 @@ def result():
     # entry = result
     return render_template('result.html', entry=result)
 
+# testing
+
 if __name__ == '__main__':
     app.run(debug=True)
