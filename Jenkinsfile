@@ -27,5 +27,24 @@ pipeline {
                 }
             }
         }
+        stage('Deliver') {
+            agent any
+            environment {
+                VOLUME = '$(pwd):/src'
+                IMAGE = 'cdrx/pyinstaller-linux:python3'
+            }
+            steps {
+                dir(path: env.BUILD_ID) {
+                    unstash(name: 'compiled-results')
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F calculator.py'"
+                }
+            }
+            post {
+                success {
+                    archiveArtifacts "${env.BUILD_ID}/dist/calculator"
+                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                }
+            }
+        }
     }
 }
