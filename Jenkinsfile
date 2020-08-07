@@ -9,7 +9,7 @@ pipeline {
             }
             steps {
                 sh 'python -m py_compile calculator.py'
-                stash(name: 'compiled-results', includes: 'sources/*.py*')
+                stash(name: 'compiled-results', includes: '*.py*')
             }
         }
     }
