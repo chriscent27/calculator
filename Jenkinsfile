@@ -14,7 +14,7 @@ void setBuildStatus(String message, String state) {
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
-
+setBuildStatus("Build in progress","PENDING")
 }
 pipeline {
     agent none
@@ -62,7 +62,10 @@ pipeline {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-
+                    setBuildStatus("Build complete", "SUCCESS")
+                }
+                failure {
+                setBuildStatus("Build failed", "FAILURE")
                 }
             }
         }
