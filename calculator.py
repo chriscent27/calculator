@@ -30,6 +30,6 @@ def Calculate():
 
     print("Result is: ", result)
 
-#t
+
 if __name__ == '__main__':
     Calculate()
