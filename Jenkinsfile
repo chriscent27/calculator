@@ -78,23 +78,23 @@ pipeline {
             }
         }
 
-        node {
-            def app
-            stage('Build image') {
-                /* This builds the actual image */
+        stage('Build image') {
+            agent any
+            steps {
+                echo 'Starting to build docker image'
 
-                app = docker.build("anandr72/nodeapp")
+                script {
+                    sh "docker build -t calculator_image ."
+                }
             }
+        }
 
-            stage('Push image') {
-                /*
-        			You would need to first register with DockerHub before you can push images to your account
-        		*/
-                docker.withRegistry('https://registry.hub.docker.com', 'docker-hub') {
-                    app.push("${env.BUILD_NUMBER}")
-                    app.push("latest")
-                    }
-                        echo "Trying to Push Docker Build to DockerHub"
+        stage('Push image') {
+            agent any
+            steps {
+                withDockerRegistry([ credentialsId: "docker-hub", url: "https://registry.hub.docker.com" ]) {
+                    sh "docker push calculator_image"
+                }
             }
         }
     }
