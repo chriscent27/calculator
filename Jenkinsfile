@@ -93,7 +93,7 @@ pipeline {
         stage('Push image') {
             agent any
             steps {
-                withDockerRegistry([ credentialsId: "docker-hub", url: "https://registry.hub.docker.com" ]) {
+                withDockerRegistry([ credentialsId: "docker-hub", url: "" ]) {
                     sh "docker push chriscent27/calculator"
                 }
             }
