@@ -1,3 +1,21 @@
+def getRepoURL() {
+  sh "git config --get remote.origin.url > .git/remote-url"
+  return readFile(".git/remote-url").trim()
+}
+def getCommitSha() {
+  sh "git rev-parse HEAD > .git/current-commit"
+  return readFile(".git/current-commit").trim()
+}
+void setBuildStatus(String message, String state) {
+  step([
+      $class: "GitHubCommitStatusSetter",
+      reposSource: [$class: "ManuallyEnteredRepositorySource", url: getRepoURL()],
+      commitShaSource: [$class: "ManuallyEnteredShaSource", sha: commitSha],
+      errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+      statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+  ]);
+
+}
 pipeline {
     agent none
     stages {
@@ -33,19 +51,18 @@ pipeline {
 
                 VOLUME = '$(pwd):/src'
                 IMAGE = 'cdrx/pyinstaller-linux:python3'
-                GIT_COMMIT_HASH = sh "(git log -n 1 --pretty=format:'%H')"
             }
             steps {
                 dir(path: env.BUILD_ID) {
                     unstash(name: 'compiled-results')
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F calculator.py'"
-                    echo "${GIT_COMMIT_HASH}"
                 }
             }
             post {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                    setBuildStatus("Build complete", "SUCCESS");
                 }
             }
         }
