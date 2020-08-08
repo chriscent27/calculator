@@ -62,7 +62,7 @@ pipeline {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                    setBuildStatus("Build complete", "SUCCESS");
+
                 }
             }
         }
