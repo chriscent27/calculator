@@ -27,9 +27,9 @@ def Calculate():
         result = division(num1, num2)
     else:
         result = 'INVALID CHOICE'
-    
+
     print("Result is: ", result)
 
-
+#t
 if __name__ == '__main__':
     Calculate()
