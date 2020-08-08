@@ -27,6 +27,5 @@ def Calculate():
 
     print("Result is: ", result)
 
-
 if __name__ == '__main__':
     Calculate()
