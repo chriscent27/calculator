@@ -14,7 +14,7 @@ void setBuildStatus(String message, String state) {
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
-setBuildStatus("Build in progress","PENDING")
+
 }
 pipeline {
     agent none
@@ -28,6 +28,11 @@ pipeline {
             steps {
                 sh 'python -m py_compile calculator.py'
                 stash(name: 'compiled-results', includes: '*.py*')
+            }
+            post {
+                always {
+                    setBuildStatus("In progress","PENDING")
+                }
             }
         }
         stage('Test') {
