@@ -27,7 +27,7 @@ def Calculate():
         result = division(num1, num2)
     else:
         result = 'INVALID CHOICE'
-    # entry = result
+    
     print("Result is: ", result)
 
 
