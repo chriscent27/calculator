@@ -78,11 +78,7 @@ pipeline {
             }
         }
         stage('End') {
-            agent any
-            steps {
-                app = docker.build("anandr72/nodeapp")
-            }
-
+            app = docker.build("anandr72/nodeapp")
         }
     }
 }
