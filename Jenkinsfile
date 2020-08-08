@@ -84,7 +84,7 @@ pipeline {
                 echo 'Starting to build docker image'
 
                 script {
-                    sh "docker build -t calculator_image ."
+                    sh "docker build -t chriscent27/calculator ."
                 }
             }
         }
@@ -93,7 +93,7 @@ pipeline {
             agent any
             steps {
                 withDockerRegistry([ credentialsId: "docker-hub", url: "https://registry.hub.docker.com" ]) {
-                    sh "docker push calculator_image"
+                    sh "docker push chriscent27/calculator"
                 }
             }
         }
