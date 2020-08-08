@@ -2,10 +2,12 @@ def getRepoURL() {
   sh "git config --get remote.origin.url > .git/remote-url"
   return readFile(".git/remote-url").trim()
 }
+
 def getCommitSha() {
   sh "git rev-parse HEAD > .git/current-commit"
   return readFile(".git/current-commit").trim()
 }
+
 void setBuildStatus(String message, String state) {
   step([
       $class: "GitHubCommitStatusSetter",
@@ -15,6 +17,7 @@ void setBuildStatus(String message, String state) {
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
 }
+
 pipeline {
     agent none
     stages {
@@ -51,7 +54,7 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') {
+        stage('DeliverBuild') {
             agent any
             environment {
 
@@ -68,10 +71,23 @@ pipeline {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                    setBuildStatus("Build complete", "SUCCESS")
                 }
                 failure {
-                setBuildStatus("Build failed", "FAILURE")
+                setBuildStatus("Delivery failed", "FAILURE")
+                }
+            }
+        }
+        stage('DeliverDocker') {
+            agent any
+            steps {
+                app = docker.build("chriscent27/calculator")
+            }
+            post {
+                success {
+                    setBuildStatus("Delivery Complete", "SUCCESS")
+                }
+                failure {
+                    setBuildStatus("Delivery failed", "FAILURE")
                 }
             }
         }
