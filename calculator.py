@@ -11,9 +11,12 @@ def division(num1, num2):
     return num1 / num2
 
 def Calculate():
-    num1 = int(input("Enter Num1: "))
-    num2 = int(input("Enter Num2: "))
-    operation = input("Enter operation: ")
+    # num1 = int(input("Enter Num1: "))
+    # num2 = int(input("Enter Num2: "))
+    # operation = input("Enter operation: ")
+    num1, operation, num2 = (input("Enter operation: ").split())
+    num1 = int(num1)
+    num2 = int(num2)
     if(operation == '+'):
         result = addition(num1, num2)
     elif(operation == '-'):
