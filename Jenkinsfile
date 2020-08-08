@@ -77,19 +77,12 @@ pipeline {
                 }
             }
         }
-        stage('DeliverDocker') {
+        stage('End') {
             agent any
             steps {
-                app = docker.build("chriscent27/calculator")
+                setBuildStatus("Delivery failed", "FAILURE")
             }
-            post {
-                success {
-                    setBuildStatus("Delivery Complete", "SUCCESS")
-                }
-                failure {
-                    setBuildStatus("Delivery failed", "FAILURE")
-                }
-            }
+
         }
     }
 }
