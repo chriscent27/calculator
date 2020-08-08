@@ -43,7 +43,7 @@ pipeline {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                    githubNotify status: "SUCCESS", credentialsId: "credential", description: 'Deployment completed', account: "chriscent27", repo: "calculator"
+                    githubNotify status: "SUCCESS", credentialsId: "test-cred", description: 'Deployment completed', account: "chriscent27", repo: "calculator"
                 }
             }
         }
