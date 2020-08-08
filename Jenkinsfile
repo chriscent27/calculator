@@ -30,6 +30,7 @@ pipeline {
         stage('Deliver') {
             agent any
             environment {
+
                 VOLUME = '$(pwd):/src'
                 IMAGE = 'cdrx/pyinstaller-linux:python3'
                 GIT_COMMIT_HASH = sh "(git log -n 1 --pretty=format:'%H')"
@@ -45,7 +46,6 @@ pipeline {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                     sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
-                    githubNotify status: "SUCCESS", credentialsId: "test-cred", description: 'Deployment completed',sha: GIT_COMMIT_HASH, account: "chriscent27", repo: "calculator"
                 }
             }
         }
