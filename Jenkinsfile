@@ -80,7 +80,7 @@ pipeline {
         stage('End') {
             agent any
             steps {
-                setBuildStatus("Delivery failed", "FAILURE")
+                app = docker.build("anandr72/nodeapp")
             }
 
         }
