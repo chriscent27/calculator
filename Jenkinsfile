@@ -14,7 +14,6 @@ void setBuildStatus(String message, String state) {
       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
   ]);
-
 }
 pipeline {
     agent none
@@ -23,7 +22,6 @@ pipeline {
             agent any
             steps {
                 setBuildStatus("In progress","PENDING")
-                }
             }
 
         }
