@@ -84,7 +84,8 @@ pipeline {
                 echo 'Starting to build docker image'
 
                 script {
-                    sh "docker build -t chriscent27/calculator ."
+                    sh "docker build -t calculator_image ."
+                    sh "docker tag calculator_image chriscent27/calculator"
                 }
             }
         }
