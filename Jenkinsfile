@@ -19,6 +19,14 @@ void setBuildStatus(String message, String state) {
 pipeline {
     agent none
     stages {
+        stage('Start') {
+            agent any
+            steps {
+                setBuildStatus("In progress","PENDING")
+                }
+            }
+
+        }
         stage('Build') {
             agent {
                 docker {
@@ -28,11 +36,6 @@ pipeline {
             steps {
                 sh 'python -m py_compile calculator.py'
                 stash(name: 'compiled-results', includes: '*.py*')
-            }
-            post {
-                always {
-                    setBuildStatus("In progress","PENDING")
-                }
             }
         }
         stage('Test') {
