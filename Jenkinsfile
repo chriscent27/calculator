@@ -21,7 +21,7 @@ void setBuildStatus(String message, String state) {
 pipeline {
     agent none
     stages {
-        stage('Start') {
+        stage('Initializing') {
             agent any
             steps {
                 setBuildStatus("In progress","PENDING")
@@ -56,6 +56,7 @@ pipeline {
         }
 
         stage('Delivery') {
+            agent any
             parallel {
 
 
@@ -80,13 +81,14 @@ pipeline {
                             sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                         }
                         failure {
-                        setBuildStatus("Delivery failed", "FAILURE")
+                        setBuildStatus("Package Build failed", "FAILURE")
                         }
                     }
                 }
 
 
                 stage('Deliver Container') {
+                    agent any
                     stages{
 
                         stage('Build Container') {
@@ -117,11 +119,10 @@ pipeline {
 
             post {
                 success {
-                    archiveArtifacts "${env.BUILD_ID}/dist/calculator"
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                    setBuildStatus("Delivery successful ", "SUCCESS")
                 }
                 failure {
-                setBuildStatus("Delivery failed", "FAILURE")
+                    setBuildStatus("Delivery failed", "FAILURE")
                 }
             }
         }
