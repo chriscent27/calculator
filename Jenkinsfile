@@ -52,6 +52,9 @@ pipeline {
                 always {
                     junit 'test-reports/results.xml'
                 }
+                failure {
+                    setBuildStatus("Test failed", "FAILURE")
+                }
             }
         }
         stage('Delivery') {
@@ -96,19 +99,18 @@ pipeline {
                                     sh "docker push chriscent27/calculator"
                                 }
                             }
-
+                            post {
+                                success {
+                                    setBuildStatus("Delivery successful ", "SUCCESS")
+                                }
+                                failure {
+                                    setBuildStatus("Delivery failed", "FAILURE")
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
-    }
-    post {
-        success {
-            setBuildStatus("Delivery successful ", "SUCCESS")
-        }
-        failure {
-            setBuildStatus("Build failed", "FAILURE")
         }
     }
 }
