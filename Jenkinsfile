@@ -56,7 +56,6 @@ pipeline {
         }
 
         stage('Delivery') {
-            agent any
             parallel {
 
 
@@ -110,6 +109,14 @@ pipeline {
                                     sh "docker push chriscent27/calculator"
                                 }
                             }
+                            post {
+                                success {
+                                    setBuildStatus("Delivery successful ", "SUCCESS")
+                                }
+                                failure {
+                                    setBuildStatus("Delivery failed", "FAILURE")
+                                }
+                            }
                         }
                     }
 
@@ -117,14 +124,7 @@ pipeline {
                 }
             }
 
-            post {
-                success {
-                    setBuildStatus("Delivery successful ", "SUCCESS")
-                }
-                failure {
-                    setBuildStatus("Delivery failed", "FAILURE")
-                }
-            }
+
         }
 
     }
