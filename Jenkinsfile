@@ -87,26 +87,30 @@ pipeline {
 
 
                 stage('Deliver Container') {
-                    stage('Build Container') {
-                        agent any
-                        steps {
-                            echo 'Starting to build docker image'
+                    stages{
 
-                            script {
-                                sh "docker build -t calculator_image ."
-                                sh "docker tag calculator_image chriscent27/calculator"
+                        stage('Build Container') {
+                            agent any
+                            steps {
+                                echo 'Starting to build docker image'
+
+                                script {
+                                    sh "docker build -t calculator_image ."
+                                    sh "docker tag calculator_image chriscent27/calculator"
+                                }
+                            }
+                        }
+
+                        stage('Push Container') {
+                            agent any
+                            steps {
+                                withDockerRegistry([ credentialsId: "docker-hub", url: "" ]) {
+                                    sh "docker push chriscent27/calculator"
+                                }
                             }
                         }
                     }
 
-                    stage('Push Container') {
-                        agent any
-                        steps {
-                            withDockerRegistry([ credentialsId: "docker-hub", url: "" ]) {
-                                sh "docker push chriscent27/calculator"
-                            }
-                        }
-                    }
 
                 }
             }
