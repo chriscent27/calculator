@@ -54,17 +54,11 @@ pipeline {
                 }
             }
         }
-
         stage('Delivery') {
             parallel {
-
-
-
-
                 stage('Build Package') {
                     agent any
                     environment {
-
                         VOLUME = '$(pwd):/src'
                         IMAGE = 'cdrx/pyinstaller-linux:python3'
                     }
@@ -79,17 +73,11 @@ pipeline {
                             archiveArtifacts "${env.BUILD_ID}/dist/calculator"
                             sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
                         }
-                        failure {
-                        setBuildStatus("Package Build failed", "FAILURE")
-                        }
                     }
                 }
-
-
                 stage('Deliver Container') {
                     agent any
                     stages{
-
                         stage('Build Container') {
                             agent any
                             steps {
@@ -101,7 +89,6 @@ pipeline {
                                 }
                             }
                         }
-
                         stage('Push Container') {
                             agent any
                             steps {
@@ -109,23 +96,19 @@ pipeline {
                                     sh "docker push chriscent27/calculator"
                                 }
                             }
-                            post {
-                                success {
-                                    setBuildStatus("Delivery successful ", "SUCCESS")
-                                }
-                                failure {
-                                    setBuildStatus("Delivery failed", "FAILURE")
-                                }
-                            }
+
                         }
                     }
-
-
                 }
             }
-
-
         }
-
+    }
+    post {
+        success {
+            setBuildStatus("Delivery successful ", "SUCCESS")
+        }
+        failure {
+            setBuildStatus("Build failed", "FAILURE")
+        }
     }
 }
