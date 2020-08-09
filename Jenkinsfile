@@ -54,19 +54,63 @@ pipeline {
                 }
             }
         }
-        stage('DeliverBuild') {
-            agent any
-            environment {
 
-                VOLUME = '$(pwd):/src'
-                IMAGE = 'cdrx/pyinstaller-linux:python3'
-            }
-            steps {
-                dir(path: env.BUILD_ID) {
-                    unstash(name: 'compiled-results')
-                    sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F calculator.py'"
+        stage('Delivery') {
+            parallel {
+
+
+
+
+                stage('Build Package') {
+                    agent any
+                    environment {
+
+                        VOLUME = '$(pwd):/src'
+                        IMAGE = 'cdrx/pyinstaller-linux:python3'
+                    }
+                    steps {
+                        dir(path: env.BUILD_ID) {
+                            unstash(name: 'compiled-results')
+                            sh "docker run --rm -v ${VOLUME} ${IMAGE} 'pyinstaller -F calculator.py'"
+                        }
+                    }
+                    post {
+                        success {
+                            archiveArtifacts "${env.BUILD_ID}/dist/calculator"
+                            sh "docker run --rm -v ${VOLUME} ${IMAGE} 'rm -rf build dist'"
+                        }
+                        failure {
+                        setBuildStatus("Delivery failed", "FAILURE")
+                        }
+                    }
+                }
+
+
+                stage('Deliver Container') {
+                    stage('Build Container') {
+                        agent any
+                        steps {
+                            echo 'Starting to build docker image'
+
+                            script {
+                                sh "docker build -t calculator_image ."
+                                sh "docker tag calculator_image chriscent27/calculator"
+                            }
+                        }
+                    }
+
+                    stage('Push Container') {
+                        agent any
+                        steps {
+                            withDockerRegistry([ credentialsId: "docker-hub", url: "" ]) {
+                                sh "docker push chriscent27/calculator"
+                            }
+                        }
+                    }
+
                 }
             }
+
             post {
                 success {
                     archiveArtifacts "${env.BUILD_ID}/dist/calculator"
@@ -78,25 +122,5 @@ pipeline {
             }
         }
 
-        stage('Build image') {
-            agent any
-            steps {
-                echo 'Starting to build docker image'
-
-                script {
-                    sh "docker build -t calculator_image ."
-                    sh "docker tag calculator_image chriscent27/calculator"
-                }
-            }
-        }
-
-        stage('Push image') {
-            agent any
-            steps {
-                withDockerRegistry([ credentialsId: "docker-hub", url: "" ]) {
-                    sh "docker push chriscent27/calculator"
-                }
-            }
-        }
     }
 }
