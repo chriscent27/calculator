@@ -26,6 +26,6 @@ def Calculate():
         result = 'INVALID CHOICE'
 
     print("Result is: ", result)
-#tes
+#test
 if __name__ == '__main__':
     Calculate()
